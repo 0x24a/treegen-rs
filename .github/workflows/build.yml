@@ -19,7 +19,7 @@ jobs:
           - os-name: macOS-x86_64
             runs-on: macOS-latest
             target: x86_64-apple-darwin
-          
+
           - os-name: macOS-arm64
             runs-on: macOS-latest
             target: aarch64-apple-darwin
@@ -36,8 +36,12 @@ jobs:
           target: ${{ matrix.platform.target }}
           args: "--release"
           strip: true
-      - name: Publish artifacts and release
-        uses: houseabsolute/actions-rust-release@v0
+      - name: Upload release assets
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          executable-name: treegen
-          target: ${{ matrix.platform.target }}
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./target/${{ matrix.platform.target }}/release/treegen-rs${{ matrix.platform.target == 'x86_64-pc-windows-msvc' && '.exe' || '' }}
+          asset_name: treegen-rs-${{ matrix.platform.os-name }}${{ matrix.platform.target == 'x86_64-pc-windows-msvc' && '.exe' || '' }}
+          asset_content_type: application/octet-stream
