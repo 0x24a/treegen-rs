@@ -1,0 +1,8 @@
+[package]
+name = "treegen-rs"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+walkdir = "2"
+rayon = "1"
