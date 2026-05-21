@@ -1,3 +1,4 @@
+use rayon::prelude::*;
 use std::{
     env,
     error::Error,
@@ -5,7 +6,6 @@ use std::{
     io::{BufWriter, Write},
     path::Path,
 };
-use rayon::prelude::*;
 use walkdir::WalkDir;
 
 fn main() -> Result<(), Box<dyn Error>> {
@@ -13,12 +13,10 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     let current_exe = env::current_exe()?;
 
-    let walker = WalkDir::new(".")
-        .into_iter()
-        .filter_entry(|e| {
-            let path = e.path();
-            path != output_path && path != current_exe
-        });
+    let walker = WalkDir::new(".").into_iter().filter_entry(|e| {
+        let path = e.path();
+        path != output_path && path != current_exe
+    });
 
     let mut file_data: Vec<(String, u64)> = walker
         .par_bridge()
